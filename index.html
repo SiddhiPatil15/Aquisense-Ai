@@ -211,21 +211,40 @@ tr:last-child td{border-bottom:none;}
 
 .demotag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EDEAE0;color:#7A6F52;padding:3px 9px;border-radius:20px;}
 
+#mobile-header { display: none; }
 @media(max-width:820px){
-  #app{flex-direction:column;}
-  #sidebar{width:100%;height:auto;position:relative;flex-direction:row;overflow-x:auto;padding:12px 0;}
-  #sidebar .brand{display:none;}
-  .navlist{display:flex;flex:none;}
-  .navlist button{white-space:nowrap;border-left:none;border-bottom:3px solid transparent;}
-  .navlist button.active{border-left:none;border-bottom-color:var(--bright-teal);}
-  #sidebar .foot{display:none;}
-  #main{padding:20px 16px 50px 16px;}
-  .hero{padding:40px 20px;}
-  .hero h1{font-size:27px;}
+  #mobile-header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--deep-teal); color: #fff; padding: 14px 20px;
+    position: sticky; top: 0; z-index: 1000;
+  }
+  #mobile-header .brand-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; }
+  #mobile-header button { background: none; border: none; color: #fff; font-size: 24px; padding: 0; }
+  
+  #app { flex-direction: column; }
+  #sidebar {
+    display: none; width: 100%; height: auto; position: fixed; top: 56px; left: 0; bottom: 0;
+    z-index: 999; padding: 0; flex-direction: column; overflow-y: auto;
+    background: var(--deep-teal);
+  }
+  #sidebar.open { display: flex; }
+  #sidebar .brand { display: none; }
+  .navlist { flex: 1; }
+  .navlist button { border-left: none; border-bottom: 1px solid rgba(255,255,255,.05); padding: 15px 20px; }
+  .navlist button.active { border-left: none; background: rgba(255,255,255,.1); }
+  #sidebar .foot { padding: 20px; margin-top: 0; border-top: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,0.1); }
+  
+  #main { padding: 20px 16px 50px 16px; }
+  .hero { padding: 40px 20px; }
+  .hero h1 { font-size: 27px; }
 }
 </style>
 </head>
 <body>
+<div id="mobile-header">
+  <div class="brand-title">Aquifer&nbsp;Sense</div>
+  <button id="mobile-menu-toggle">☰</button>
+</div>
 <div id="app">
   <nav id="sidebar">
     <div class="brand">
@@ -243,5 +262,19 @@ tr:last-child td{border-bottom:none;}
   </main>
 </div>
 <script src="app.js"></script>
+<script>
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    document.getElementById('navlist').addEventListener('click', (e) => {
+      if(e.target.closest('button')) {
+        sidebar.classList.remove('open');
+      }
+    });
+  }
+</script>
 </body>
 </html>
