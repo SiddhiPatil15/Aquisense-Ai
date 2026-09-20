@@ -1,4 +1,4 @@
-# Aquifer Sense — Groundwater Prediction & Early Warning Prototype
+# Aqui Sense AI — Groundwater Prediction & Early Warning Prototype
 
 A working, browser-based prototype of an AI-powered groundwater prediction and
 early-warning system. Every figure the app shows — validation counts, model
