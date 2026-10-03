@@ -243,6 +243,42 @@ function trainMovingAverageBaseline(X, y, windowFeatureIdx=0){
   return { predict: row => row[0] };
 }
 
+// Simple Random Forest (Bagging ensemble of CART trees)
+function trainRandomForest(X, y, n_trees=5){
+  const trees = [];
+  for(let i=0; i<n_trees; i++) {
+     const sampleX = []; const sampleY = [];
+     for(let j=0; j<X.length; j++) {
+       const idx = Math.floor(Math.random()*X.length);
+       sampleX.push(X[idx]); sampleY.push(y[idx]);
+     }
+     trees.push(trainRegressionTree(sampleX, sampleY, 5, Math.max(3,Math.floor(sampleX.length*0.02))));
+  }
+  return { predict: row => {
+      const preds = trees.map(t => t.predict(row));
+      return preds.reduce((a,b)=>a+b,0)/preds.length;
+  } };
+}
+
+// Simple Gradient Boosting Machine
+function trainGradientBoosting(X, y, n_trees=5, lr=0.2){
+  if (!y.length) return { predict: ()=>0 };
+  const base_val = y.reduce((a,b)=>a+b,0)/y.length;
+  const trees = [];
+  let current_preds = y.map(() => base_val);
+  for(let i=0; i<n_trees; i++) {
+     const residuals = y.map((val, idx) => val - current_preds[idx]);
+     const tree = trainRegressionTree(X, residuals, 4, Math.max(3,Math.floor(X.length*0.02)));
+     trees.push(tree);
+     current_preds = current_preds.map((pred, idx) => pred + lr * tree.predict(X[idx]));
+  }
+  return { predict: row => {
+     let p = base_val;
+     for(let tree of trees) p += lr * tree.predict(row);
+     return p;
+  }};
+}
+
 function evalMetrics(yTrue, yPred){
   const n = yTrue.length;
   const errors = yTrue.map((t,i)=>t-yPred[i]);
@@ -594,9 +630,14 @@ function trainAndEvaluate(featureRows){
     candidates.push({name:"Decision Tree", model:tree, metrics: evalMetrics(yte, preds)});
   }catch(e){}
   try{
-    const base = trainMovingAverageBaseline(Xtr, ytr);
-    const preds = Xte.map(x=>base.predict(x));
-    candidates.push({name:"Persistence Baseline", model:base, metrics: evalMetrics(yte, preds)});
+    const rf = trainRandomForest(XtrTree || Xtr, ytrTree || ytr, 5);
+    const preds = Xte.map(x=>rf.predict(x));
+    candidates.push({name:"Random Forest", model:rf, metrics: evalMetrics(yte, preds)});
+  }catch(e){}
+  try{
+    const gbm = trainGradientBoosting(XtrTree || Xtr, ytrTree || ytr, 5, 0.2);
+    const preds = Xte.map(x=>gbm.predict(x));
+    candidates.push({name:"Gradient Boosting", model:gbm, metrics: evalMetrics(yte, preds)});
   }catch(e){}
 
   candidates.sort((a,b)=> (a.metrics.rmse ?? Infinity) - (b.metrics.rmse ?? Infinity));
@@ -671,9 +712,15 @@ function trainAndEvaluateWaterQuality(featureRows){
     } catch(e) {}
 
     try {
-      const base = trainMovingAverageBaseline(Xtr, ytr);
-      const preds = Xte.map(x => base.predict(x));
-      candidates.push({ name: "Persistence Baseline", model: base, metrics: evalMetrics(yte, preds) });
+      const rf = trainRandomForest(Xtr, ytr, 5);
+      const preds = Xte.map(x => rf.predict(x));
+      candidates.push({ name: "Random Forest", model: rf, metrics: evalMetrics(yte, preds) });
+    } catch(e) {}
+
+    try {
+      const gbm = trainGradientBoosting(Xtr, ytr, 5, 0.2);
+      const preds = Xte.map(x => gbm.predict(x));
+      candidates.push({ name: "Gradient Boosting", model: gbm, metrics: evalMetrics(yte, preds) });
     } catch(e) {}
 
     candidates.sort((a,b) => (a.metrics.rmse ?? Infinity) - (b.metrics.rmse ?? Infinity));
