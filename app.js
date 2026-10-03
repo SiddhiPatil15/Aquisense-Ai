@@ -1566,7 +1566,7 @@ VIEW_RENDERERS.landing = () => `
         <div class="pipeline" style="margin-top:16px;">
           ${["Project","Upload","Validate","Engineer features","Train ML Models","Water Quality Forecast","Level Forecast","WQI & Risk","Dashboard"].map(s=>`<div class="pipestep pending">${s}</div>`).join("")}
         </div>
-        <div class="note limit">This is a client-side prototype: data validation, feature engineering, model training/evaluation, WQI and risk scoring all run locally in your browser session. A production deployment would move the ML and storage layers to a server (FastAPI + PostgreSQL) as described in the accompanying README, so multiple users can share persisted data.</div>
+
       </div>
     </div>
   </div>`;
