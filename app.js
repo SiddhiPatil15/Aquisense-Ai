@@ -632,14 +632,15 @@ function trainAndEvaluate(featureRows){
     const preds = Xte.map(x=>lr.predict(x));
     candidates.push({name:"Linear Regression", model:lr, metrics: evalMetrics(yte, preds)});
   }catch(e){ /* skip on numerical failure */ }
+  const CAP = 3000;
+  let XtrTree = Xtr, ytrTree = ytr;
+  if(Xtr.length > CAP){
+    const step = Xtr.length / CAP;
+    const idxs = Array.from({length:CAP}, (_,i)=>Math.floor(i*step));
+    XtrTree = idxs.map(i=>Xtr[i]); ytrTree = idxs.map(i=>ytr[i]);
+  }
+
   try{
-    const CAP = 3000;
-    let XtrTree = Xtr, ytrTree = ytr;
-    if(Xtr.length > CAP){
-      const step = Xtr.length / CAP;
-      const idxs = Array.from({length:CAP}, (_,i)=>Math.floor(i*step));
-      XtrTree = idxs.map(i=>Xtr[i]); ytrTree = idxs.map(i=>ytr[i]);
-    }
     const tree = trainRegressionTree(XtrTree, ytrTree, 5, Math.max(3,Math.floor(XtrTree.length*0.02)));
     const preds = Xte.map(x=>tree.predict(x));
     candidates.push({name:"Decision Tree", model:tree, metrics: evalMetrics(yte, preds)});
