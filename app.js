@@ -204,11 +204,6 @@ function trainLinearRegression(X, y){
 
 // Simple CART regression tree (real recursive splitting on real data).
 function trainRegressionTree(X, y, maxDepth=4, minLeaf=5){
-  function variance(idxs){
-    const vals = idxs.map(i=>y[i]);
-    const m = mean(vals);
-    return vals.reduce((s,v)=>s+(v-m)**2,0);
-  }
   function buildNode(idxs, depth){
     if(depth>=maxDepth || idxs.length<minLeaf*2){
       return {leaf:true, value:mean(idxs.map(i=>y[i]))};
@@ -217,13 +212,33 @@ function trainRegressionTree(X, y, maxDepth=4, minLeaf=5){
     const nFeat = X[0].length;
     for(let f=0; f<nFeat; f++){
       const sortedIdx = idxs.slice().sort((a,b)=>X[a][f]-X[b][f]);
-      for(let t=minLeaf; t<sortedIdx.length-minLeaf; t++){
-        const thresh = (X[sortedIdx[t-1]][f]+X[sortedIdx[t]][f])/2;
-        const left = idxs.filter(i=>X[i][f]<=thresh);
-        const right = idxs.filter(i=>X[i][f]>thresh);
-        if(left.length<minLeaf||right.length<minLeaf) continue;
-        const score = variance(left)+variance(right);
-        if(!best || score<best.score) best = {score, f, thresh, left, right};
+      let total_sum = 0, total_sq = 0;
+      for(let i=0; i<sortedIdx.length; i++){
+        const val = y[sortedIdx[i]];
+        total_sum += val;
+        total_sq += val * val;
+      }
+      let left_sum = 0, left_sq = 0;
+      for(let t=0; t<sortedIdx.length-1; t++){
+        const val = y[sortedIdx[t]];
+        left_sum += val;
+        left_sq += val * val;
+        const left_count = t + 1;
+        const right_count = sortedIdx.length - left_count;
+        if(left_count < minLeaf) continue;
+        if(right_count < minLeaf) break;
+        const val_left = X[sortedIdx[t]][f];
+        const val_right = X[sortedIdx[t+1]][f];
+        if(val_left === val_right) continue;
+        const thresh = (val_left + val_right)/2;
+        const right_sum = total_sum - left_sum;
+        const right_sq = total_sq - left_sq;
+        const var_left = left_sq - (left_sum * left_sum) / left_count;
+        const var_right = right_sq - (right_sum * right_sum) / right_count;
+        const score = Math.max(0, var_left) + Math.max(0, var_right);
+        if(!best || score<best.score) {
+          best = {score, f, thresh, left: sortedIdx.slice(0, left_count), right: sortedIdx.slice(left_count)};
+        }
       }
     }
     if(!best) return {leaf:true, value:mean(idxs.map(i=>y[i]))};
