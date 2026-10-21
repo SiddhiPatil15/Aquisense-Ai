@@ -1644,7 +1644,7 @@ VIEW_RENDERERS.landing = () => `
   <div id="landing">
     <div class="hero">
       <div class="hero-inner">
-        <h1>AI-Powered Groundwater Intelligence</h1>
+        <h1>AquiSense Groundwater Intelligence</h1>
         <p class="tag">Predict groundwater conditions &amp; water quality. Detect risks early. Support better decisions.</p>
         <div class="btnrow">
           <button class="btn" style="background:#fff;color:var(--deep-teal);" onclick="navigate('dashboard')">Open Dashboard</button>
@@ -3017,7 +3017,7 @@ VIEW_RENDERERS.dashboard = () => {
   return `
     <div class="pagehead">
       <div>
-        <h2>AI Groundwater Intelligence</h2>
+        <h2>AquiSense Groundwater Intelligence</h2>
         <div class="ctx">
           Project: ${p.name} · ${p.location} · Data Source: ${getDataSourceBadge(ds)} · Last updated ${new Date(ds.uploadedAt).toLocaleString()}
         </div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groundwater Intelligence — Prediction &amp; Early Warning Prototype</title>
+<title>AquiSense</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
@@ -54,25 +54,32 @@ button{font-family:inherit;cursor:pointer;}
 
 /* ---------- Sidebar ---------- */
 #sidebar{
-  width:230px;flex-shrink:0;background:var(--deep-teal);color:#EAF3F1;
-  display:flex;flex-direction:column;padding:22px 0;position:sticky;top:0;height:100vh;
+  width:245px;flex-shrink:0;background:var(--deep-teal);color:#EAF3F1;
+  display:flex;flex-direction:column;padding:14px 0 10px 0;position:sticky;top:0;height:100vh;
 }
-#sidebar .brand{padding:0 20px 18px 20px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:10px;}
-#sidebar .brand .mark{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:#fff;line-height:1.15;}
-#sidebar .brand .sub{font-size:11.5px;color:#9FC6C0;margin-top:4px;}
-.navlist{list-style:none;margin:0;padding:0;flex:1;overflow-y:auto;}
+#sidebar .brand{padding:0 18px 12px 18px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:6px;}
+#sidebar .brand .mark{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:#fff;line-height:1.15;}
+#sidebar .brand .sub{font-size:11px;color:#9FC6C0;margin-top:2px;}
+.navlist{
+  list-style:none;margin:0;padding:2px 0;flex:1;overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.15) transparent;
+}
+.navlist::-webkit-scrollbar{width:4px;}
+.navlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
 .navlist li{margin:0;}
 .navlist button{
   width:100%;text-align:left;background:none;border:none;color:#CFE6E2;
-  padding:11px 20px;font-size:13.5px;display:flex;align-items:center;gap:10px;
-  border-left:3px solid transparent;
+  padding:7px 18px;font-size:12.5px;line-height:1.3;display:flex;align-items:center;gap:9px;
+  border-left:3px solid transparent;white-space:nowrap;
+  transition:background .12s, color .12s;
 }
-.navlist button:hover{background:rgba(255,255,255,.06);}
-.navlist button.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--bright-teal);font-weight:600;}
-.navlist .icn{width:16px;text-align:center;opacity:.85;font-size:14px;}
-#sidebar .foot{padding:14px 20px 0 20px;border-top:1px solid rgba(255,255,255,.12);margin-top:10px;}
-#sidebar .foot select{width:100%;padding:6px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:12.5px;}
-#sidebar .foot label{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8FBAB3;display:block;margin-bottom:5px;}
+.navlist button:hover{background:rgba(255,255,255,.06);color:#fff;}
+.navlist button.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:var(--bright-teal);font-weight:600;}
+.navlist .icn{width:16px;text-align:center;opacity:.85;font-size:13px;flex-shrink:0;}
+#sidebar .foot{padding:10px 18px 0 18px;border-top:1px solid rgba(255,255,255,.12);margin-top:6px;}
+#sidebar .foot select{width:100%;padding:5px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:12px;}
+#sidebar .foot label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#8FBAB3;display:block;margin-bottom:4px;}
 
 /* ---------- Main ---------- */
 #main{flex:1;min-width:0;padding:30px 38px 60px 38px;max-width:1180px;}
@@ -328,13 +335,13 @@ tr:last-child td{border-bottom:none;}
 </head>
 <body>
 <div id="mobile-header">
-  <div class="brand-title">Aquifer&nbsp;Sense</div>
+  <div class="brand-title">AquiSense</div>
   <button id="mobile-menu-toggle">☰</button>
 </div>
 <div id="app">
   <nav id="sidebar">
     <div class="brand">
-      <div class="mark">Aquifer&nbsp;Sense</div>
+      <div class="mark">AquiSense</div>
       <div class="sub">Groundwater intelligence &amp; early warning</div>
     </div>
     <ul class="navlist" id="navlist"></ul>
